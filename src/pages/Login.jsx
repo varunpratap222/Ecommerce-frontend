@@ -36,6 +36,11 @@ function Login() {
 
       // later you will store token here
       // localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", response.data.token);
+      const logout = () => {
+  localStorage.removeItem("token");
+  navigate("/login");
+};
 
       setTimeout(() => {
         navigate("/products"); // redirect after login

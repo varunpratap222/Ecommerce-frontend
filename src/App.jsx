@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Products from "./pages/Products";
+import ProtectedRoute from "./ProtectedRoute";
 
 
 
@@ -15,12 +16,20 @@ function App() {
   }, [location.pathname]);
 
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/register" replace />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/products" element={<Products />} />
-    </Routes>
+<Routes>
+  <Route path="/" element={<Navigate to="/register" replace />} />
+  <Route path="/register" element={<Register />} />
+  <Route path="/login" element={<Login />} />
+
+  <Route
+    path="/products"
+    element={
+      <ProtectedRoute>
+        <Products />
+      </ProtectedRoute>
+    }
+  />
+</Routes>
     
   );
 }
