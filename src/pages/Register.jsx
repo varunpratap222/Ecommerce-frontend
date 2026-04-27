@@ -30,17 +30,32 @@ function Register() {
     setLoading(true);
     setMessage("");
 
-    try {
-      const res = await axios.post("http://localhost:8080/api/auth/register", form);
-      setMessage(res.data.message || "✅ Registration successful!");
-      setForm({ name: "", email: "", password: "" });
 
-    } catch (err) {
-      setMessage(
-        err.response?.data || "❌ Registration failed.");
-    } finally {
-      setLoading(false);
-    }
+    try {
+  const res = await axios.post(
+    "http://localhost:8080/api/users/register",
+    form,
+    { headers: { "Content-Type": "application/json" } }
+
+  );
+
+  setMessage(res.data.message || "✅ Registration successful!");
+  setForm({ name: "", email: "", password: "" });
+
+} catch (err) {
+  const status = err.response?.status;
+
+  if (status === 403) {
+    setMessage("⚠️ User already exists");
+  } else if (err.response?.data?.message) {
+    setMessage(err.response.data.message);
+  } else {
+    setMessage("❌ Registration failed");
+  }
+} finally {
+  setLoading(false);
+}
+
   };
 
   return (

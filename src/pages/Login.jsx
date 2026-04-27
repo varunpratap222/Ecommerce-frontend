@@ -22,38 +22,34 @@ function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+  e.preventDefault();
+  setLoading(true);
+  setMessage("");
 
-    try {
-      const res = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        form
-      );
+  try {
+    const res = await axios.post(
+      "http://localhost:8080/api/users/login",
+      form,
+      { headers: { "Content-Type": "application/json" } }
+    );
 
-      setMessage("Login successful ✅");
+    setMessage("Login successful ✅");
 
-      // later you will store token here
-      // localStorage.setItem("token", res.data.token);
-      localStorage.setItem("token", response.data.token);
-      const logout = () => {
-  localStorage.removeItem("token");
-  navigate("/login");
+    // ✅ FIX: use correct variable
+    localStorage.setItem("token", res.data.token);
+
+    setTimeout(() => {
+      navigate("/products");
+    }, 1000);
+
+  } catch (err) {
+    setMessage(
+      err.response?.data?.message || "Invalid credentials ❌"
+    );
+  } finally {
+    setLoading(false);
+  }
 };
-
-      setTimeout(() => {
-        navigate("/products"); // redirect after login
-      }, 1000);
-
-    } catch (err) {
-      setMessage(
-        err.response?.data?.message || "Invalid credentials ❌"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
 

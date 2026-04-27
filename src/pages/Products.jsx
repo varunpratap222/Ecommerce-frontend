@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 function Products() {
+  const navigate = useNavigate();
+    const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -12,22 +18,43 @@ function Products() {
   }, []);
 
   const fetchProducts = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/api/products");
-      console.log("API RESPONSE:", res.data); // Debug log to check response structure
-      setProducts(res.data);
-    } catch (err) {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(
+      "http://localhost:8080/api/users/products",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("API RESPONSE:", res.data);
+    setProducts(res.data);
+
+  } catch (err) {
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      setError("Unauthorized ❌ Please login again.");
+      navigate("/login");
+    } else {
       setError("Failed to load products ❌");
-    } finally {
-      setLoading(false);
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   if (loading) return <h2>Loading products...</h2>;
   if (error) return <h2>{error}</h2>;
 
   return (
     <div style={styles.container}>
+      <button onClick={logout} style={{ marginBottom: "20px" }}>
+      Logout
+    </button>
+
       <h1>Products</h1>
 
       <div style={styles.grid}>
