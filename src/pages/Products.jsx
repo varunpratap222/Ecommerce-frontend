@@ -5,13 +5,15 @@ import { useNavigate } from "react-router-dom";
 
 function Products() {
   const navigate = useNavigate();
-    const logout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+    
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -20,7 +22,7 @@ function Products() {
   const fetchProducts = async () => {
   try {
     const token = localStorage.getItem("token");
-
+    console.log("➡️ TOKEN:", token);
     const res = await axios.get(
       "http://localhost:8080/api/users/products",
       {
