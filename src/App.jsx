@@ -4,7 +4,8 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Products from "./pages/Products";
 import ProtectedRoute from "./ProtectedRoute";
-
+import AdminLogin from "./admin/AdminLogin";
+import AdminProducts from "./admin/AdminProducts";
 
 
 
@@ -20,6 +21,8 @@ function App() {
   <Route path="/" element={<Navigate to="/login" replace />} />
   <Route path="/register" element={<Register />} />
   <Route path="/login" element={<Login />} />
+  <Route path="/admin-login" element={<AdminLogin />} />
+  <Route path="/admin/products" element={<AdminProducts />} />
 
   <Route
     path="/products"
