@@ -31,6 +31,24 @@ function Products() {
         },
       }
     );
+
+    const addToCart = async (productId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.post(`http://localhost:8080/api/users/cart/${productId}`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    alert("Added To Cart Successfully 🛒");
+  } catch (err) {
+    alert("Add To Cart Failed ❌");
+  }
+};
+
+    
     console.log("API RESPONSE:", res.data);
     setProducts(res.data);
 
@@ -52,24 +70,40 @@ function Products() {
   if (error) return <h2>{error}</h2>;
 
   return (
-    <div style={styles.container}>
-      <button onClick={logout} style={{ marginBottom: "20px" }}>
-      Logout
-    </button>
+    <><div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+      <button onClick={logout}>Logout</button>
+      <button onClick={() => navigate("/cart")}>My Cart 🛒</button>
+    </div><div style={styles.container}>
+       
 
-      <h1>Products</h1>
+        <h1>Products</h1>
 
-      <div style={styles.grid}>
-        {products.map((p, idx) => (
-          <div key={p.id ?? idx} style={styles.card}>
-            <img src={p.imageUrl} alt={p.name} style={styles.image} />
-            <h3>{p.name}</h3>
-            <p>₹{p.price}</p>
-            <button style={styles.btn}>Add to Cart</button>
-          </div>
-        ))}
-      </div>
-    </div>
+        <div style={styles.grid}>
+          {products.map((p, idx) => (
+            <div
+              key={p.id ?? idx}
+              style={styles.card}
+              onClick={() => navigate(`/product/${p.id}`)}
+            >
+              <img src={p.imageUrl} alt={p.name} style={styles.image} />
+              <h3>{p.name}</h3>
+              <p>{p.category}</p>
+              <p>₹{p.price}</p>
+              <p>Stock: {p.stock}</p>
+              <button
+                style={styles.btn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToCart(p.id);
+                } }
+              >
+                Add to Cart
+              </button>
+            </div>
+
+          ))}
+        </div>
+      </div></>
   );
 }
 

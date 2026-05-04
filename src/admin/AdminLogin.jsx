@@ -25,10 +25,25 @@ function AdminLogin() {
     try {
       const res = await axios.post("http://localhost:8080/api/users/login", form);
 
-      localStorage.setItem("token", res.data);
-      localStorage.setItem("isAdmin", "true");
+      const token = res.data.token;
 
+      localStorage.setItem("token", token);
+
+      const userRes = await axios.get("http://localhost:8080/api/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (userRes.data.role !== "ROLE_ADMIN") {
+        localStorage.clear();
+        setError("Access Denied ❌ You are not an admin");
+        return;
+      }
+
+      localStorage.setItem("isAdmin", "true");
       navigate("/admin/products");
+
     } catch (err) {
       setError("Invalid admin credentials ❌");
     } finally {

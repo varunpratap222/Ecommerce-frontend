@@ -6,6 +6,8 @@ import Products from "./pages/Products";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminLogin from "./admin/AdminLogin";
 import AdminProducts from "./admin/AdminProducts";
+import ProductDetails from "./pages/ProductDetails";
+import Cart from "./pages/Cart";
 
 
 
@@ -23,6 +25,9 @@ function App() {
   <Route path="/login" element={<Login />} />
   <Route path="/admin-login" element={<AdminLogin />} />
   <Route path="/admin/products" element={<AdminProducts />} />
+  <Route path="/product/:id" element={<ProductDetails />} />
+  <Route path="/cart" element={<Cart />} />
+  
 
   <Route
     path="/products"
