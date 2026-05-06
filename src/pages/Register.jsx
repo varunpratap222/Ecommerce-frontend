@@ -1,188 +1,188 @@
 import { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // handle input change
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  // simple password strength check
-  const getStrength = (password) => {
-    if (password.length < 4) return "Weak";
-    if (password.length < 8) return "Medium";
-    return "Strong";
-  };
-
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
-
     try {
-  const res = await axios.post(
-    "http://localhost:8080/api/users/register",
-    form,
-    { headers: { "Content-Type": "application/json" } }
+      const res = await axios.post("http://localhost:8080/api/users/register", form);
 
-  );
+      setMessage(res.data.message || "Registered Successfully ✅");
 
-  setMessage(res.data.message || "✅ Registration successful!");
-  setForm({ name: "", email: "", password: "" });
-
-} catch (err) {
-  const status = err.response?.status;
-
-  if (status === 403) {
-    setMessage("⚠️ User already exists");
-  } else if (err.response?.data?.message) {
-    setMessage(err.response.data.message);
-  } else {
-    setMessage("❌ Registration failed");
-  }
-} finally {
-  setLoading(false);
-}
-
+      setTimeout(() => {
+        navigate("/login");
+      }, 1200);
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Registration Failed ❌");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div style={styles.wrapper}>
-      <div style={styles.card}>
-        <h2>Create Account</h2>
+    <div style={styles.container}>
+      <div style={styles.leftPanel}>
+        <h1 style={styles.brand}>ShopSphere</h1>
+        <h2 style={styles.tagline}>Create Your Shopping Account</h2>
+        <p style={styles.desc}>
+          Join thousands of happy customers and explore premium products,
+          secure payments, and lightning fast checkout experience.
+        </p>
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          
-          {/* Name */}
-          <input
-            name="name"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={handleChange}
-            style={styles.input}
-            required
-          />
-
-          {/* Email */}
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            style={styles.input}
-            required
-          />
-
-          {/* Password */}
-          <div style={styles.passwordBox}>
-            <input
-              name="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              style={styles.input}
-              required
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              style={styles.toggle}
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
-          </div>
-
-          {/* Strength indicator */}
-          {form.password && (
-            <p style={styles.strength}>
-              Strength: {getStrength(form.password)}
-            </p>
-          )}
-
-          {/* Submit */}
-          <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? "Creating..." : "Register"}
-          </button>
-
-          <p style={{ marginTop: "10px" }}>
-  Already have an account?{" "}
-  <Link to="/login" style={{ color: "#38bdf8" }}>
-    Login here
-  </Link>
-</p>
-
-          {/* Message */}
-          {message && <p style={styles.message}>{message}</p>}
-        </form>
+        <ul style={styles.features}>
+          <li>✔ Quick User Registration</li>
+          <li>✔ Instant Product Access</li>
+          <li>✔ Secure JWT Authentication</li>
+        </ul>
       </div>
+
+      <form onSubmit={handleRegister} style={styles.form}>
+        <h2 style={styles.title}>Create Account</h2>
+        <p style={styles.sub}>Start your shopping journey today</p>
+
+        <input
+          type="text"
+          name="name"
+          placeholder="Enter full name"
+          value={form.name}
+          onChange={handleChange}
+          style={styles.input}
+          required
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Enter email"
+          value={form.email}
+          onChange={handleChange}
+          style={styles.input}
+          required
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Enter password"
+          value={form.password}
+          onChange={handleChange}
+          style={styles.input}
+          required
+        />
+
+        <button type="submit" disabled={loading} style={styles.button}>
+          {loading ? "Creating Account..." : "Register"}
+        </button>
+
+        <p style={styles.msg}>{message}</p>
+
+        <p style={styles.linkText}>
+          Already have an account?{" "}
+          <Link to="/login" style={styles.link}>Login</Link>
+        </p>
+      </form>
     </div>
   );
 }
 
 const styles = {
-  wrapper: {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#0f172a",
+  container: {
+    minHeight: "100vh",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    background: "linear-gradient(to right,#020617,#0f172a)",
+    color: "white",
   },
-  card: {
-    width: "350px",
-    padding: "25px",
-    borderRadius: "10px",
-    background: "#1e293b",
-    color: "#fff",
-  },
-  form: {
+  leftPanel: {
+    padding: "80px",
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
+    justifyContent: "center",
+  },
+  brand: {
+    fontSize: "55px",
+    color: "#38bdf8",
+  },
+  tagline: {
+    fontSize: "34px",
+    margin: "10px 0 20px",
+  },
+  desc: {
+    color: "#cbd5e1",
+    lineHeight: "1.8",
+    width: "80%",
+  },
+  features: {
+    marginTop: "30px",
+    lineHeight: "2.2",
+    fontSize: "18px",
+  },
+  form: {
+    width: "400px",
+    margin: "auto",
+    padding: "40px",
+    background: "rgba(30,41,59,0.9)",
+    borderRadius: "16px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+    boxShadow: "0 0 25px rgba(0,0,0,0.4)",
+  },
+  title: {
+    textAlign: "center",
+    fontSize: "30px",
+  },
+  sub: {
+    textAlign: "center",
+    color: "#94a3b8",
   },
   input: {
-    padding: "10px",
-    borderRadius: "6px",
+    padding: "14px",
+    borderRadius: "8px",
     border: "none",
+    outline: "none",
   },
   button: {
-    padding: "10px",
-    background: "#3b82f6",
-    color: "white",
+    padding: "14px",
     border: "none",
-    borderRadius: "6px",
+    borderRadius: "8px",
+    background: "#38bdf8",
+    color: "white",
     cursor: "pointer",
+    fontWeight: "bold",
   },
-  passwordBox: {
-    display: "flex",
-    gap: "5px",
+  msg: {
+    textAlign: "center",
   },
-  toggle: {
-    padding: "10px",
-    fontSize: "12px",
-    cursor: "pointer",
+  linkText: {
+    textAlign: "center",
   },
-  strength: {
-    fontSize: "12px",
-    color: "#fbbf24",
-  },
-  message: {
-    marginTop: "10px",
-    fontSize: "13px",
+  link: {
+    color: "#38bdf8",
+    textDecoration: "none",
+    fontWeight: "bold",
   },
 };
 

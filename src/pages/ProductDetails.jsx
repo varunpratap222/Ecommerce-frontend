@@ -7,9 +7,7 @@ function ProductDetails() {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const getToken = () => localStorage.getItem("token");
+  const [qty, setQty] = useState(1);
 
   useEffect(() => {
     fetchProduct();
@@ -17,60 +15,107 @@ function ProductDetails() {
 
   const fetchProduct = async () => {
     try {
+      const token = localStorage.getItem("token");
+
       const res = await axios.get(`http://localhost:8080/api/users/products/${id}`, {
         headers: {
-          Authorization: `Bearer ${getToken()}`,
+          Authorization: `Bearer ${token}`,
         },
       });
+
       setProduct(res.data);
     } catch (err) {
       alert("Failed to load product ❌");
-    } finally {
-      setLoading(false);
     }
   };
 
   const addToCart = async () => {
     try {
-      await axios.post(`http://localhost:8080/api/users/cart/${id}`, {}, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-      alert("Product Added To Cart 🛒");
+      const token = localStorage.getItem("token");
+
+      for (let i = 0; i < qty; i++) {
+        await axios.post(`http://localhost:8080/api/users/cart/${id}`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+
+      alert("Added To Cart Successfully 🛒");
     } catch (err) {
-      alert("Failed To Add Cart ❌");
+      alert("Add To Cart Failed ❌");
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
-  if (loading) return <h2 style={{ color: "white", textAlign: "center" }}>Loading...</h2>;
+  if (!product) return <h2 style={{ color: "white", textAlign: "center" }}>Loading...</h2>;
 
   return (
     <div style={styles.container}>
-      <div style={styles.topbar}>
-        <button onClick={() => navigate("/products")} style={styles.backBtn}>← Back</button>
-        <button onClick={logout} style={styles.logout}>Logout</button>
-      </div>
+      <button onClick={() => navigate("/products")} style={styles.backBtn}>
+        ← Back to Products
+      </button>
 
       <div style={styles.wrapper}>
-        <div style={styles.imageBox}>
+        <div style={styles.left}>
           <img src={product.imageUrl} alt={product.name} style={styles.image} />
         </div>
 
-        <div style={styles.infoBox}>
-          <h1>{product.name}</h1>
-          <p style={styles.category}>{product.category}</p>
-          <p style={styles.desc}>{product.description}</p>
-          <h2>₹{product.price}</h2>
-          <p>Available Stock: {product.stock}</p>
+        <div style={styles.right}>
+          <div style={styles.badges}>
+            <span style={styles.category}>{product.category}</span>
+            <span style={styles.stock}>{product.stock > 0 ? "In Stock" : "Out of Stock"}</span>
+          </div>
 
-          <button onClick={addToCart} style={styles.cartBtn}>Add To Cart</button>
+          <h1>{product.name}</h1>
+
+          <p style={styles.price}>₹{product.price}</p>
+
+          <p style={styles.shortDesc}>
+            {product.description}
+          </p>
+
+          <div style={styles.qtyBox}>
+            <button
+              style={styles.qtyBtn}
+              onClick={() => qty > 1 && setQty(qty - 1)}
+            >
+              -
+            </button>
+
+            <span style={styles.qtyText}>{qty}</span>
+
+            <button
+              style={styles.qtyBtn}
+              onClick={() => setQty(qty + 1)}
+            >
+              +
+            </button>
+          </div>
+
+          <div style={styles.actionRow}>
+            <button style={styles.cartBtn} onClick={addToCart}>
+              Add To Cart 🛒
+            </button>
+
+            <button style={styles.buyBtn}>
+              Buy Now ⚡
+            </button>
+          </div>
         </div>
+      </div>
+
+      <div style={styles.descriptionPanel}>
+        <h2>Product Description</h2>
+        <p>{product.description}</p>
+
+        <h3 style={{ marginTop: "20px" }}>Why you'll love this product?</h3>
+        <ul style={styles.list}>
+          <li>Premium quality materials</li>
+          <li>Long lasting durability</li>
+          <li>Affordable best-in-class pricing</li>
+          <li>Trusted by hundreds of customers</li>
+          <li>Fast and secure delivery available</li>
+        </ul>
       </div>
     </div>
   );
@@ -83,66 +128,116 @@ const styles = {
     color: "white",
     padding: "30px",
   },
-  topbar: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginBottom: "30px",
-  },
   backBtn: {
-    padding: "10px 18px",
+    marginBottom: "20px",
+    padding: "10px 16px",
     border: "none",
     borderRadius: "8px",
     cursor: "pointer",
-    fontWeight: "bold",
-  },
-  logout: {
-    padding: "10px 18px",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: "bold",
   },
   wrapper: {
-    display: "flex",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
     gap: "40px",
     background: "#1e293b",
     padding: "30px",
     borderRadius: "16px",
-    alignItems: "center",
+    boxShadow: "0 0 20px rgba(0,0,0,0.3)",
   },
-  imageBox: {
-    flex: 1,
+  left: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     width: "100%",
-    maxHeight: "400px",
+    maxHeight: "450px",
     objectFit: "cover",
-    borderRadius: "12px",
+    borderRadius: "14px",
   },
-  infoBox: {
-    flex: 1,
+  right: {
     display: "flex",
     flexDirection: "column",
-    gap: "15px",
+    justifyContent: "center",
+  },
+  badges: {
+    display: "flex",
+    gap: "12px",
+    marginBottom: "15px",
   },
   category: {
-    color: "#38bdf8",
+    background: "#334155",
+    padding: "6px 12px",
+    borderRadius: "6px",
+    fontSize: "13px",
+  },
+  stock: {
+    background: "#166534",
+    padding: "6px 12px",
+    borderRadius: "6px",
+    fontSize: "13px",
+  },
+  price: {
+    fontSize: "34px",
+    fontWeight: "bold",
+    color: "#22c55e",
+    margin: "20px 0",
+  },
+  shortDesc: {
+    color: "#cbd5e1",
+    lineHeight: "1.7",
+  },
+  qtyBox: {
+    display: "flex",
+    alignItems: "center",
+    gap: "15px",
+    marginTop: "25px",
+  },
+  qtyBtn: {
+    padding: "8px 15px",
+    fontSize: "20px",
+    cursor: "pointer",
+    borderRadius: "6px",
+    border: "none",
+  },
+  qtyText: {
+    fontSize: "20px",
     fontWeight: "bold",
   },
-  desc: {
-    lineHeight: "1.6",
+  actionRow: {
+    display: "flex",
+    gap: "20px",
+    marginTop: "30px",
   },
   cartBtn: {
-    marginTop: "20px",
-    width: "200px",
-    padding: "14px",
-    background: "#22c55e",
-    color: "white",
+    padding: "14px 22px",
+    background: "#38bdf8",
     border: "none",
-    borderRadius: "10px",
+    borderRadius: "8px",
     cursor: "pointer",
     fontWeight: "bold",
-    fontSize: "16px",
+    color: "white",
+  },
+  buyBtn: {
+    padding: "14px 22px",
+    background: "#22c55e",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    color: "white",
+  },
+  descriptionPanel: {
+    marginTop: "30px",
+    background: "#1e293b",
+    padding: "25px",
+    borderRadius: "14px",
+    lineHeight: "1.8",
+  },
+  list: {
+    marginTop: "10px",
+    paddingLeft: "20px",
+    color: "#cbd5e1",
   },
 };
 

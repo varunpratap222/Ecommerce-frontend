@@ -38,12 +38,40 @@ function Cart() {
     }
   };
 
+  const increaseQty = async (cartId) => {
+    try {
+      await axios.put(`http://localhost:8080/api/users/cart/increase/${cartId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      fetchCart();
+    } catch (err) {
+      alert("Increase failed ❌");
+    }
+  };
+
+  const decreaseQty = async (cartId) => {
+    try {
+      await axios.put(`http://localhost:8080/api/users/cart/decrease/${cartId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      fetchCart();
+    } catch (err) {
+      alert("Decrease failed ❌");
+    }
+  };
+
   const totalAmount = items.reduce((sum, item) => sum + item.totalPrice, 0);
 
   return (
     <div style={styles.container}>
       <div style={styles.topbar}>
-        <button onClick={() => navigate("/products")} style={styles.backBtn}>← Continue Shopping</button>
+        <button onClick={() => navigate("/products")} style={styles.backBtn}>
+          ← Continue Shopping
+        </button>
         <h1>My Cart 🛒</h1>
       </div>
 
@@ -57,7 +85,13 @@ function Cart() {
                 <img src={item.imageUrl} alt={item.productName} style={styles.image} />
                 <h3>{item.productName}</h3>
                 <p>₹{item.price}</p>
-                <p>Qty: {item.quantity}</p>
+
+                <div style={styles.qtyBox}>
+                  <button onClick={() => decreaseQty(item.cartId)} style={styles.qtyBtn}>-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => increaseQty(item.cartId)} style={styles.qtyBtn}>+</button>
+                </div>
+
                 <p>Subtotal: ₹{item.totalPrice}</p>
 
                 <button onClick={() => removeItem(item.cartId)} style={styles.deleteBtn}>
@@ -112,8 +146,25 @@ const styles = {
     objectFit: "cover",
     borderRadius: "10px",
   },
-  deleteBtn: {
+  qtyBox: {
     marginTop: "10px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "15px",
+    fontSize: "18px",
+    fontWeight: "bold",
+  },
+  qtyBtn: {
+    padding: "6px 14px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: "18px",
+  },
+  deleteBtn: {
+    marginTop: "12px",
     padding: "10px 15px",
     border: "none",
     borderRadius: "8px",
