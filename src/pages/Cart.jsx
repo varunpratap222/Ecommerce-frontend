@@ -97,13 +97,26 @@ function Cart() {
                 <button onClick={() => removeItem(item.cartId)} style={styles.deleteBtn}>
                   Remove
                 </button>
+                
               </div>
+              
+
             ))}
           </div>
 
-          <div style={styles.totalBox}>
-            <h2>Total Amount: ₹{totalAmount}</h2>
-          </div>
+          <div style={styles.checkoutWrapper}>
+  <div style={styles.totalBox}>
+    <h2>Total Amount: ₹{totalAmount}</h2>
+  </div>
+  <button
+    onClick={() => navigate("/checkout")}
+    style={styles.checkoutBtn}
+  >
+    Proceed to Checkout
+  </button>
+</div>
+
+
         </>
       )}
     </div>
@@ -172,11 +185,35 @@ const styles = {
     color: "white",
     cursor: "pointer",
   },
-  totalBox: {
+  checkoutWrapper: {
+    display: "flex",
+    flexDirection: "column", // Stacks the total and the button
+    alignItems: "flex-end",   // Pushes both to the right side
     marginTop: "30px",
+    paddingBottom: "50px",   // Extra space at the bottom of the page
+  },
+
+  // 2. MODIFY YOUR totalBox (Remove marginTop as wrapper handles it)
+  totalBox: {
     textAlign: "right",
     fontSize: "20px",
+    marginBottom: "10px",    // Space between price and button
   },
+
+  // 3. MODIFY YOUR checkoutBtn
+  checkoutBtn: {
+    width: "300px",          // Fixed width often looks better on the right
+    padding: "16px",
+    borderRadius: "12px",
+    border: "none",
+    background: "linear-gradient(to right,#38bdf8,#0ea5e9)",
+    color: "white",
+    fontSize: "16px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    transition: "transform 0.2s", // Subtle hover effect
+  },
+
 };
 
 export default Cart;

@@ -8,6 +8,7 @@ import AdminLogin from "./admin/AdminLogin";
 import AdminProducts from "./admin/AdminProducts";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 
 
 
@@ -27,6 +28,7 @@ function App() {
   <Route path="/admin/products" element={<AdminProducts />} />
   <Route path="/product/:id" element={<ProductDetails />} />
   <Route path="/cart" element={<Cart />} />
+  <Route path="/checkout" element={<Checkout />} />
   
 
   <Route
