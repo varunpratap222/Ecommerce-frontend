@@ -78,7 +78,7 @@ function Checkout() {
       await axios.post(
         "http://localhost:8080/api/orders/checkout",
         {
-          address: form,
+          form,
         },
         {
           headers: {
