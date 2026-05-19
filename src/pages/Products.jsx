@@ -81,9 +81,13 @@ function Products() {
         />
 
         <div style={styles.navBtns}>
-          <button onClick={() => navigate("/cart")} style={styles.cartBtn}>My Cart 🛒</button>
+          <button onClick={() => navigate("/cart")} style={styles.cartBtn}>My Cart</button>
+          <button onClick={() => navigate("/my-orders")} style={styles.cartBtn}>My Orders </button>
           <button onClick={logout} style={styles.logoutBtn}>Logout</button>
+          <button onClick={() => navigate("/profile")} style={styles.profileBtn}>Profile</button>
+          
         </div>
+        
       </div>
 
       <div style={styles.banner}>
@@ -119,6 +123,7 @@ function Products() {
             >
               Add To Cart
             </button>
+            
           </div>
         ))}
       </div>
@@ -129,7 +134,7 @@ function Products() {
 const styles = {
   container: {
     minHeight: "100vh",
-    background: "#020617",
+    background: "#716f33c4",
     color: "white",
     padding: "20px 35px",
   },
@@ -144,7 +149,7 @@ const styles = {
   logo: {
     fontSize: "28px",
     fontWeight: "bold",
-    color: "#38bdf8",
+    color: "#f8e838",
   },
   search: {
     width: "350px",
@@ -172,8 +177,15 @@ const styles = {
     cursor: "pointer",
     fontWeight: "bold",
   },
+    profileBtn: {
+    padding: "10px 16px",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
   banner: {
-    background: "linear-gradient(to right,#0ea5e9,#1d4ed8)",
+    background: "linear-gradient(to right,#d8cf1d,#d8cf1d)",
     padding: "35px",
     borderRadius: "14px",
     marginBottom: "30px",

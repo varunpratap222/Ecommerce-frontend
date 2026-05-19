@@ -9,8 +9,8 @@ import AdminProducts from "./admin/AdminProducts";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-
-
+import MyOrders from "./pages/MyOrders";
+import Profile from "./pages/Profile";
 
 function App() {
   const location = useLocation();
@@ -29,7 +29,8 @@ function App() {
   <Route path="/product/:id" element={<ProductDetails />} />
   <Route path="/cart" element={<Cart />} />
   <Route path="/checkout" element={<Checkout />} />
-  
+  <Route path="/my-orders" element={<MyOrders />} />
+  <Route path="/profile" element={<Profile />} />
 
   <Route
     path="/products"
